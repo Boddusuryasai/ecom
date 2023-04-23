@@ -18,6 +18,11 @@ export const createCoupon = asyncHandler(async (req, res) => {
     }
 
     // check id code already exists
+    const existingCoupon = await Coupon.findOne({ code });
+
+    if (existingCoupon) {
+        throw new CustomError("Coupon code already exists", 400);
+    }
 
     const coupon = await Coupon.create({
         code, 
@@ -37,6 +42,9 @@ export const updateCoupon = asyncHandler(async (req, res) => {
     const {action} = req.body
 
     // action is boolean or not
+    if (typeof action !== "boolean") {
+        throw new CustomError("Invalid action value", 400);
+    }
 
     const coupon = await Coupon.findByIdAndUpdate(
         couponId,
